@@ -1,11 +1,39 @@
-module.exports = {
-  // Airbnb says yes but react team says no...I choose to defer to react team
-  // in this scenario.
-  // @see https://github.com/airbnb/javascript/pull/985#issuecomment-239145468
-  'react/jsx-filename-extension': 'off',
+import { defineConfig } from 'eslint/config';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
+import react from 'eslint-plugin-react';
+import reactHooks from 'eslint-plugin-react-hooks';
+import globals from 'globals';
 
-  // airbnb breaking change in v18. Turning this off because I think this is a powerful
-  // pattern used a lot on projects I work on. It's more of a nuisance than a help.
-  // @see https://github.com/airbnb/javascript/blob/master/packages/eslint-config-airbnb/CHANGELOG.md#1800--2019-08-10
-  'react/jsx-props-no-spreading': 'off',
-};
+/**
+ * React ESLint configuration. Includes React, React Hooks, and JSX accessibility rules.
+ *
+ * - https://github.com/jsx-eslint/eslint-plugin-react
+ * - https://github.com/facebook/react/tree/main/packages/eslint-plugin-react-hooks
+ * - https://github.com/jsx-eslint/eslint-plugin-jsx-a11y
+ */
+export default defineConfig([
+  {
+    name: 'codfish/react',
+
+    files: ['**/*.{js,mjs,cjs,jsx,mjsx,ts,tsx,mtsx}'],
+
+    ...react.configs.flat.recommended,
+    ...jsxA11y.flatConfigs.recommended,
+
+    languageOptions: {
+      globals: {
+        ...globals.serviceworker,
+        ...globals.browser,
+      },
+    },
+  },
+
+  // React Hooks configuration
+  reactHooks.configs['recommended-latest'],
+
+  {
+    rules: {
+      'react-hooks/exhaustive-deps': 'off',
+    },
+  },
+]);

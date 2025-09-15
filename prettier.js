@@ -1,5 +1,9 @@
-module.exports = {
-  printWidth: 100,
+/**
+ * @see https://prettier.io/docs/configuration
+ * @type {import("prettier").Config}
+ */
+const config = {
+  printWidth: 120,
   tabWidth: 2,
   useTabs: false,
   semi: true,
@@ -16,4 +20,7 @@ module.exports = {
   bracketSameLine: false,
   proseWrap: 'always',
   vueIndentScriptAndStyle: false,
+  embeddedLanguageFormatting: 'auto',
 };
+
+export default config;

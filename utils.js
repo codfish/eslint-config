@@ -5,28 +5,30 @@
  *
  * @see https://github.com/kentcdodds/kcd-scripts/blob/main/src/utils.js
  */
-const fs = require('fs');
-const path = require('path');
-const readPkgUp = require('read-pkg-up');
-const arrify = require('arrify');
-const has = require('lodash.has');
+import fs from 'node:fs';
+import { cosmiconfigSync } from 'cosmiconfig';
+import has from 'lodash.has';
+import { readPackageUp } from 'read-package-up';
 
-const { packageJson: pkg, path: pkgPath } = readPkgUp.sync({
-  cwd: fs.realpathSync(process.cwd()),
-});
-const appDirectory = path.dirname(pkgPath);
+const { packageJson: pkg, path: pkgPath } =
+  (await readPackageUp({
+    cwd: fs.realpathSync(process.cwd()),
+  })) || {};
 
-const fromRoot = (...p) => path.join(appDirectory, ...p);
-const hasFile = (...p) => fs.existsSync(fromRoot(...p));
-const ifFile = (files, t, f) => (arrify(files).some(file => hasFile(file)) ? t : f);
+const hasPkgProp = props => [props].flat().some(prop => has(pkg, prop));
+const hasPkgSubProp = pkgProp => props => hasPkgProp([props].flat().map(p => `${pkgProp}.${p}`));
 
-const hasPkgProp = props => arrify(props).some(prop => has(pkg, prop));
-const hasPkgSubProp = pkgProp => props => hasPkgProp(arrify(props).map(p => `${pkgProp}.${p}`));
+export const hasDep = hasPkgSubProp('dependencies');
 
-const hasDep = hasPkgSubProp('dependencies');
-const hasDevDep = hasPkgSubProp('devDependencies');
-const hasPeerDep = hasPkgSubProp('peerDependencies');
-const hasAnyDep = args => [hasDep, hasDevDep, hasPeerDep].some(fn => fn(args));
-const ifAnyDep = (deps, t, f) => (hasAnyDep(arrify(deps)) ? t : f);
+export const hasDevDep = hasPkgSubProp('devDependencies');
+export const hasPeerDep = hasPkgSubProp('peerDependencies');
+export const hasAnyDep = args => [hasDep, hasDevDep, hasPeerDep].some(fn => fn(args));
 
-module.exports = { ifAnyDep, ifFile };
+export const ifAnyDep = (deps, t, f) => (hasAnyDep([deps].flat()) ? t : f);
+
+export function hasLocalConfig(moduleName, searchOptions = {}) {
+  const explorerSync = cosmiconfigSync(moduleName, searchOptions);
+  const result = explorerSync.search(pkgPath || './');
+
+  return result !== null;
+}

@@ -1,131 +1,136 @@
-const fs = require('fs');
-const path = require('path');
-const { ifAnyDep } = require('./utils');
-const reactRules = require('./rules/react');
-const babelRules = require('./rules/babel');
-const dockerRules = require('./rules/docker');
-const typescriptRules = require('./rules/typescript');
+import js from '@eslint/js';
+import { defineConfig } from 'eslint/config';
+import prettier from 'eslint-plugin-prettier/recommended';
+import simpleImportSortPlugin from 'eslint-plugin-simple-import-sort';
+import globals from 'globals';
+import tseslint from 'typescript-eslint';
 
-// eslint-disable-next-line no-nested-ternary
-const tsConfig = fs.existsSync('tsconfig.json')
-  ? path.resolve('tsconfig.json')
-  : fs.existsSync('types/tsconfig.json')
-  ? path.resolve('types/tsconfig.json')
-  : undefined;
+import prettierBuiltInConfig from './prettier.js';
+import configFilesConfig from './rules/config-files.js';
+import jestConfig from './rules/jest.js';
+import reactConfig from './rules/react.js';
+import vitestConfig from './rules/vitest.js';
+import { hasLocalConfig, ifAnyDep } from './utils.js';
 
-module.exports = {
-  extends: [
-    // Airbnb config as the foundation
-    ifAnyDep('react', 'airbnb', 'airbnb-base'),
+const useBuiltinPrettierConfig = !hasLocalConfig('prettier');
 
-    // Kent C. Dodds' Jest config
-    ifAnyDep('jest', 'kentcdodds/jest'),
+/**
+ * Modern ESLint configuration with dynamic feature detection
+ * Supports TypeScript, React, Jest, Vitest, and Prettier
+ */
+export default defineConfig([
+  // Base JavaScript configuration
+  js.configs.recommended,
 
-    // Prettier plugin includes config, plugin & rules declaration
-    'plugin:prettier/recommended',
-  ].filter(Boolean),
+  tseslint.configs.recommended,
 
-  parser: '@babel/eslint-parser',
+  // Base configuration for all files
+  {
+    name: 'codfish/base',
 
-  parserOptions: {
-    requireConfigFile: false,
-    allowImportExportEverywhere: true,
-    ecmaVersion: 2022,
-    sourceType: 'module',
-    ecmaFeatures: {
-      jsx: true,
+    plugins: {
+      'simple-import-sort': simpleImportSortPlugin,
+    },
+
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        ...globals.es2022,
+      },
+    },
+
+    rules: {
+      // Custom Grouping: https://github.com/lydell/eslint-plugin-simple-import-sort#custom-grouping
+      // Examples: https://github.com/lydell/eslint-plugin-simple-import-sort/blob/main/examples/.eslintrc.js
+      'simple-import-sort/imports': [
+        'error',
+        {
+          groups: [
+            // 1. Node.js builtins prefixed with `node:` or node_modules
+            // Exclude relative imports using aliases like `@/` or `@{src|test|tests}` (common ts config paths).
+            ['^node:', '^\\u0000', '^(\\w|@(?!src|tests?\\/)\\w)'],
+            // All local imports:
+            // - Absolute imports and other imports like `@/foo`.
+            // - Anything not matched in another group.
+            // - Anything that starts with a dot.
+            ['^', '^\\.'],
+          ],
+        },
+      ],
+      'simple-import-sort/exports': 'error',
+
+      // 2. Encouraging `lodash-es` imports per file
+      // lodash imports should use `lodash-es` package and should be imported per file.
+      //    E.G: `import get from 'lodash-es/get'`
+      // More details in https://stackoverflow.com/questions/35250500/correct-way-to-import-lodash#answer-35251059
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'lodash',
+              message: "Please use lodash-es direct import E.G: `import get from 'lodash-es/get'`",
+            },
+            {
+              name: 'lodash-es',
+              message: "Please use lodash-es direct import E.G: `import get from 'lodash-es/get'`",
+            },
+          ],
+          patterns: [
+            {
+              group: ['lodash/*'],
+              message: "Please use lodash-es direct import E.G: `import get from 'lodash-es/get'`",
+            },
+          ],
+        },
+      ],
     },
   },
 
-  plugins: ['@babel'],
+  // Custom ignores
+  {
+    name: 'codfish/ignores',
 
-  rules: {
-    ...reactRules,
-    ...babelRules,
-    ...dockerRules,
-
-    // turn import/extensions off to support esmodules
-    // https://nodejs.org/api/esm.html#mandatory-file-extensions
-    'import/extensions': 'off',
+    ignores: [
+      '!.github',
+      '!.vitepress',
+      '**/logs/',
+      'bin/*',
+      '**/dist/',
+      '**/dist-ssr/',
+      '**/cache/',
+      '**/coverage/',
+      'cypress/screenshots/',
+      'cypress/videos/',
+      'storybook-static/',
+    ],
   },
 
-  env: {
-    browser: true,
-    commonjs: true,
-    node: true,
-    es6: true,
+  // Configuration files (eslint, prettier, etc.)
+  configFilesConfig,
+
+  // React configuration (dynamic)
+  ifAnyDep('react', reactConfig, []),
+
+  // Jest OR Vitest configuration (dynamic)
+  ifAnyDep('jest', jestConfig, []),
+
+  // Vitest configuration (dynamic)
+  ifAnyDep('vitest', vitestConfig, []),
+
+  // Prettier plugin is responsible for running prettier as an ESLint
+  // rule and turning off ESLint rules that might conflict.
+  // IMPORTANT: KEEP THIS LAST TO OVERRIDE ESLINT!
+  prettier,
+
+  {
+    rules: {
+      // Reset prettier rule passing in codfish's prettier config.
+      // IMPORTANT: KEEP THIS LAST TO OVERRIDE PRETTIER PLUGIN!
+      'prettier/prettier': useBuiltinPrettierConfig ? ['error', prettierBuiltInConfig] : 'error',
+    },
   },
-
-  overrides: [
-    // overrides for TypeScript files
-    {
-      files: ['**/*.ts?(x)'],
-      extends: [
-        'plugin:import/typescript',
-        ifAnyDep('react', 'airbnb-typescript', 'airbnb-typescript/base'),
-        // re-extending from prettier to ensure it's always the last ruleset
-        'plugin:prettier/recommended',
-      ],
-      parser: '@typescript-eslint/parser',
-      parserOptions: {
-        ecmaVersion: 2021,
-        sourceType: 'module',
-        project: tsConfig,
-      },
-      plugins: ['@typescript-eslint'],
-      rules: {
-        ...typescriptRules,
-        // redeclaring rules overrides cause `airbnb-typescript` re-extends from
-        // `airbnb`'s config, effectively overriding the overrides
-        ...reactRules,
-        ...dockerRules,
-      },
-    },
-
-    // sane overrides for test files
-    {
-      files: [
-        '**/__mocks__/**/*.js',
-        '**/__tests__/**/*.js',
-        '**/__fixtures__/**/*.js',
-        '**/test/**/*.js',
-        '**/tests/**/*.js',
-        '*.test.js',
-        '*.spec.js',
-        'jest.setup.js',
-        'jest.config.js',
-        'setupTests.js',
-        'testUtils.js',
-      ],
-      env: {
-        mocha: true,
-        jest: true,
-      },
-      rules: {
-        'import/no-extraneous-dependencies': 'off',
-        'no-underscore-dangle': 'off',
-        'no-unused-expressions': 'off',
-      },
-    },
-
-    // sane overrides for dot files
-    {
-      files: [
-        '.eslintrc.js',
-        'eslint.config.js',
-        '.prettierrc.js',
-        'prettier.config.js',
-        '.commitlintrc.js',
-        'commitlint.config.js',
-        '.huskyrc.js',
-        '.lintstagedrc.js',
-        'lint-staged.config.js',
-      ],
-      rules: {
-        // linting only runs in non-prod environments so we should be able to
-        // import dev dependencies
-        'import/no-extraneous-dependencies': 'off',
-      },
-    },
-  ],
-};
+]);

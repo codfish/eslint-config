@@ -1,4 +1,4 @@
-name: Validate Code
+name: Validate
 
 on: pull_request
 
@@ -6,53 +6,20 @@ jobs:
   validate:
     runs-on: ubuntu-latest
 
-    steps:
-      - uses: actions/checkout@v1
-
-      - uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
-
-      - name: install dependencies
-        run: npm install --no-save
-
-      - name: lint commits
-        run:
-          npx commitlint --from="origin/${{ github.base_ref }}" --to="origin/${{ github.head_ref }}"
-
-      - name: lint js
-        run: npm run lint
-
-  pr-version:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [20.x, 22.x, 24.x]
 
     steps:
-      - uses: actions/checkout@v1
-
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v5
         with:
-          node-version: '14.x'
-          registry-url: 'https://registry.npmjs.org'
+          ref: ${{ github.event.pull_request.head.sha || github.ref }}
 
-      - name: publish to npm
-        id: pr-publish
-        run: |
-          version="0.0.0-PR-${PR}--$(echo ${SHA} | cut -c -7)"
-          npm version $version --no-git-tag-version
-          npm publish --access public --tag pr
-          echo "::set-output name=pr_version::$version"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          PR: ${{ github.event.number }}
-          SHA: ${{ github.event.pull_request.head.sha }}
-
-      - uses: actions/github-script@v3
+      - uses: actions/setup-node@v5
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '🚀 PR version published: `${{ steps.pr-publish.outputs.pr_version }}`'
-            })
+          node-version: ${{ matrix.node }}
+          registry-url: https://registry.npmjs.org
+
+      - run: npm run lint:commits -- --from="origin/${{ github.base_ref }}" --to="origin/${{github.head_ref }}"
+      - run: npm run lint
+      - run: npm run type-check
