@@ -1,10 +1,13 @@
 import vitest from '@vitest/eslint-plugin';
 import { defineConfig } from 'eslint/config';
+import testingLibrary from 'eslint-plugin-testing-library';
 import globals from 'globals';
+
+import { ifAnyDep } from '../utils.js';
 
 /**
  * Vitest ESLint configuration for flat config format
- * Includes Vitest-specific rules and globals for test files
+ * Includes Vitest-specific rules, globals, and Testing Library rules for test files
  */
 export default defineConfig([
   {
@@ -17,6 +20,9 @@ export default defineConfig([
 
     ...vitest.configs.recommended,
 
+    ...ifAnyDep('react-testing-library', testingLibrary.configs['flat/react'], {}),
+    ...ifAnyDep('vue-testing-library', testingLibrary.configs['flat/vue'], {}),
+
     name: 'codfish/vitest',
 
     languageOptions: {
@@ -28,7 +34,7 @@ export default defineConfig([
 
     rules: {
       'no-console': 'off',
-      'tailwindcss/no-custom-classname': 'off',
+      ...ifAnyDep('tailwindcss', { 'tailwindcss/no-custom-classname': 'off' }, {}),
     },
   },
 ]);

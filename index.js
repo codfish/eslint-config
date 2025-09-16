@@ -2,6 +2,8 @@ import js from '@eslint/js';
 import { defineConfig } from 'eslint/config';
 import prettier from 'eslint-plugin-prettier/recommended';
 import simpleImportSortPlugin from 'eslint-plugin-simple-import-sort';
+import tailwindPlugin from 'eslint-plugin-tailwindcss';
+import ymlPlugin from 'eslint-plugin-yml';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
@@ -16,7 +18,7 @@ const useBuiltinPrettierConfig = !hasLocalConfig('prettier');
 
 /**
  * Modern ESLint configuration with dynamic feature detection
- * Supports TypeScript, React, Jest, Vitest, and Prettier
+ * Supports TypeScript, React, Jest, Vitest, Prettier, YAML, Tailwind CSS, and Next.js
  */
 export default defineConfig([
   // Base JavaScript configuration
@@ -97,6 +99,9 @@ export default defineConfig([
     ignores: [
       '!.github',
       '!.vitepress',
+      '.next',
+      'coverage',
+      '.vercel',
       '**/logs/',
       'bin/*',
       '**/dist/',
@@ -105,15 +110,48 @@ export default defineConfig([
       '**/coverage/',
       'cypress/screenshots/',
       'cypress/videos/',
-      'storybook-static/',
+      'storybook-static',
+      '.nuxt',
+      '.svelte-kit',
+      '.docusaurus',
+      '.astro',
+      '.output',
+      '**/out/',
+      '.vite',
+      '.parcel-cache',
+      '.webpack',
+      '.turbo',
+      '.nyc_output',
+      'playwright-report',
+      'cypress/downloads/',
+      'cypress/reports/',
+      '.serverless',
+      '.netlify',
+      '.wrangler',
+      '.firebase',
+      'android',
+      'ios',
+      '.expo',
+      '**/tmp/',
+      '**/temp/',
+      '.tmp',
+      '.eslintcache',
+      '*.tsbuildinfo',
     ],
   },
 
   // Configuration files (eslint, prettier, etc.)
   configFilesConfig,
 
+  // YML files
+  ymlPlugin.configs['flat/standard'],
+  ymlPlugin.configs['flat/prettier'], // handles conflicting rules with the yml plugin
+
   // React configuration (dynamic)
   ifAnyDep('react', reactConfig, []),
+
+  // Tailwind CSS configuration (dynamic)
+  ifAnyDep('tailwindcss', tailwindPlugin.configs['flat/recommended'], []),
 
   // Jest OR Vitest configuration (dynamic)
   ifAnyDep('jest', jestConfig, []),

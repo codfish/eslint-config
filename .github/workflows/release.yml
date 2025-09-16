@@ -30,6 +30,7 @@ jobs:
         env:
           CI: true
 
+      # Types will be built automatically because of the prepublishOnly script
       - name: semantic release
         uses: docker://ghcr.io/codfish/semantic-release-action@sha256:5d5447090feb2f9252aac2825ef14e244ecf53528fbe87d585b459adb547b914
         env:

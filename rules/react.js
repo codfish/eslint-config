@@ -1,8 +1,11 @@
+import nextPlugin from '@next/eslint-plugin-next';
 import { defineConfig } from 'eslint/config';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import globals from 'globals';
+
+import { ifAnyDep } from '../utils.js';
 
 /**
  * React ESLint configuration. Includes React, React Hooks, and JSX accessibility rules.
@@ -30,6 +33,18 @@ export default defineConfig([
 
   // React Hooks configuration
   reactHooks.configs['recommended-latest'],
+
+  // Next.js configuration (dynamic)
+  ifAnyDep(
+    'next',
+    {
+      ...nextPlugin.flatConfig.recommended,
+      ...nextPlugin.flatConfig.coreWebVitals,
+
+      name: 'codfish/next',
+    },
+    {},
+  ),
 
   {
     rules: {

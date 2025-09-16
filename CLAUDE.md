@@ -1,7 +1,8 @@
+<!-- DOCTOC SKIP -->
+
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this
-repository.
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Commands
 
@@ -13,9 +14,8 @@ repository.
 
 ## Architecture
 
-This is a modern ESLint configuration package built on ESLint v9+ flat config format with TypeScript
-support and ESM. It provides dynamic feature detection and modern recommended presets while
-maintaining backward compatibility.
+This is a modern ESLint configuration package built on ESLint v9+ flat config format with TypeScript support and ESM. It
+provides dynamic feature detection and modern recommended presets while maintaining backward compatibility.
 
 ### Core Structure
 
