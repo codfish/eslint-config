@@ -2,7 +2,6 @@ import js from '@eslint/js';
 import { defineConfig } from 'eslint/config';
 import prettier from 'eslint-plugin-prettier/recommended';
 import simpleImportSortPlugin from 'eslint-plugin-simple-import-sort';
-import tailwindPlugin from 'eslint-plugin-tailwindcss';
 import ymlPlugin from 'eslint-plugin-yml';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -18,7 +17,7 @@ const useBuiltinPrettierConfig = !hasLocalConfig('prettier');
 
 /**
  * Modern ESLint configuration with dynamic feature detection
- * Supports TypeScript, React, Jest, Vitest, Prettier, YAML, Tailwind CSS, and Next.js
+ * Supports TypeScript, React, Jest, Vitest, Prettier, YAML, and Next.js
  */
 export default defineConfig([
   // Base JavaScript configuration
@@ -149,9 +148,6 @@ export default defineConfig([
 
   // React configuration (dynamic)
   ifAnyDep('react', reactConfig, []),
-
-  // Tailwind CSS configuration (dynamic)
-  ifAnyDep('tailwindcss', tailwindPlugin.configs['flat/recommended'], []),
 
   // Jest OR Vitest configuration (dynamic)
   ifAnyDep('jest', jestConfig, []),

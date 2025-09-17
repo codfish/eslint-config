@@ -1,7 +1,7 @@
 # @codfish/eslint-config
 
-> Modern ESLint configuration with TypeScript, React/Next.js, Tailwind CSS, YAML, Testing Library, and testing framework
-> support using ESLint v9+ flat config format.
+> Modern ESLint configuration with TypeScript, React/Next.js, YAML, Testing Library, and testing framework support using
+> ESLint v9+ flat config format.
 
 [![version](https://img.shields.io/npm/v/@codfish/eslint-config.svg)](http://npm.im/@codfish/eslint-config)
 [![downloads](https://img.shields.io/npm/dm/@codfish/eslint-config.svg)](http://npm-stat.com/charts.html?package=@codfish/eslint-config&from=2015-08-01)
@@ -15,16 +15,13 @@
 ## Table of Contents
 
 - [Features](#features)
-  - [Automatic Configuration](#automatic-configuration)
-  - [Opinionated Highlights](#opinionated-highlights)
 - [Installation](#installation)
 - [Usage](#usage)
-  - [Docker Configuration](#docker-configuration)
-  - [dApps Configuration](#dapps-configuration)
+  - [Opinionated Highlights](#opinionated-highlights)
 - [Prettier Configuration](#prettier-configuration)
+  - [Use in combination with prettier-plugin-tailwindcss](#use-in-combination-with-prettier-plugin-tailwindcss)
 - [Example scripts](#example-scripts)
 - [Commitlint Configuration](#commitlint-configuration)
-- [Known issues](#known-issues)
 - [Migration from Legacy Config](#migration-from-legacy-config)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -39,57 +36,11 @@
 - **Next.js support**: Automatically configures Next.js official plugin linting rules when detected
 - **Test framework agnostic**: Supports Jest and Vitest with automatic detection
 - **Testing Library integration**: Automatically includes Testing Library rules for test files
-- **Tailwind CSS support**: Automatically configures Tailwind CSS linting when detected
 - **YAML/YML support**: Built-in linting for YAML configuration files
 - **Prettier integration**: Built-in Prettier configuration with conflict resolution via eslint-config-prettier
 - **ESM architecture**: Built with ECMAScript modules and full TypeScript typing
 - **Docker support**: Optional configuration for dockerized applications
 - **Blockchain/dApp support**: Optional configuration for decentralized applications
-
-### Automatic Configuration
-
-The config automatically detects and configures:
-
-- **React**: Includes React, React Hooks, and JSX a11y rules when `react` is installed
-- **Next.js**: Includes Next.js recommended and Core Web Vitals rules when `next` is detected
-- **Jest**: Configures Jest-specific rules when `jest` is found in dependencies
-- **Vitest**: Configures Vitest-specific rules when `vitest` is detected
-- **Testing Library**: Automatically adds Testing Library rules for test files in Jest/Vitest projects
-- **Tailwind CSS**: Includes Tailwind CSS linting rules when `tailwindcss` is detected
-- **YAML files**: Always includes YAML/YML file linting support
-- **Prettier**: Loads your project's Prettier config or falls back to [my defaults](./prettier.js)
-
-### Opinionated Highlights
-
-This configuration includes some opinionated settings that you might want to customize for your project:
-
-**Prettier/Formatting:**
-
-- **Semicolons**: Enforces semicolons (`;`)
-- **120 character line width**: Wider than the common 80/100 - you might prefer shorter lines
-- **2-space indentation**: Uses 2 spaces for tabs
-- **Single quotes**: Prefers `'single'` over `"double"` quotes
-- **Trailing commas**: Adds trailing commas everywhere
-- **Arrow parentheses**: Avoids parens around single args (`x => x` not `(x) => x`)
-
-**ESLint Rules:**
-
-- **Import sorting**: Enforces automatic import organization with specific grouping rules
-- **Lodash restrictions**: Requires direct imports (`import get from 'lodash-es/get'`) instead of full lodash
-- **React hooks deps**: Disables `exhaustive-deps` rule - you might want this stricter
-- **Console statements**: Disallows `console.log` in regular code (only allowed in test files) - some teams prefer
-  warnings instead of errors
-- **Next.js rules**: Enforces Next.js best practices and Core Web Vitals optimization
-- **Tailwind class sorting**: Automatically sorts Tailwind classes (can break dynamic class builds - see Known Issues)
-- **Testing Library rules**: Enforces Testing Library best practices in test files
-
-**File Ignores:**
-
-- Ignores common build directories (`.next`, `coverage`, `.vercel`, etc.)
-- Includes `.github` and `.vitepress` folders (not ignored like most configs)
-
-See the [configuration examples below](#usage) for instructions on overriding these settings to match your team's
-preferences.
 
 ## Installation
 
@@ -124,7 +75,41 @@ export default defineConfig(
 > [!IMPORTANT] If you get ES module errors, you may need to set the `type` field in your `package.json` to `module` or
 > rename your config file to `eslint.config.mjs`.
 
-Not using the `defineConfig` function, just spread the config object:
+**Using extends and targetting all files:**
+
+```js
+import codfish from '@codfish/eslint-config';
+
+export default defineConfig({
+  extends: [codfish],
+  rules: {
+    // temporary
+    '@typescript-eslint/no-explicit-any': 'off',
+  },
+});
+```
+
+**Using extends and targetting specific files:**
+
+> [!WARNING]
+>
+> **Not recommended.** This will prevent it from using the `files` specified in the main config, so rules around test
+> files, yml files, etc. will not be applied.
+
+```js
+import codfish from '@codfish/eslint-config';
+
+export default defineConfig({
+  files: ['**/*.{js,jsx,ts,tsx}'],
+  extends: [codfish],
+  rules: {
+    // temporary
+    '@typescript-eslint/no-explicit-any': 'off',
+  },
+});
+```
+
+**Not using the `defineConfig` function, just spread the config object:**
 
 ```js
 import codfish from '@codfish/eslint-config';
@@ -181,9 +166,6 @@ export default defineConfig(
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
     rules: {
-      // Customize Tailwind CSS rules
-      'tailwindcss/classnames-order': 'warn',
-      'tailwindcss/no-custom-classname': 'off',
       // Customize Next.js rules
       '@next/next/no-img-element': 'warn',
       '@next/next/no-html-link-for-pages': 'off',
@@ -192,7 +174,7 @@ export default defineConfig(
 );
 ```
 
-### Docker Configuration
+**Docker Configuration:**
 
 For projects leveraging Docker containers, you may want to disable import resolution errors for `node_modules` if
 packages are only available in the container but you're running the linter locally.
@@ -211,17 +193,24 @@ export default defineConfig(
 );
 ```
 
-### dApps Configuration
+**dApps Configuration:**
 
 For decentralized applications that use build artifacts and blockchain globals, use the specialized dApp config. This
 config will set some globals as well as ignore missing build artifact imports. While you obviously need those to run
 your app, sometimes you might want to run the linter in a ci/cd environment and build artifacts might not be present.
 
-You can also directly import the Prettier config:
-
 ```js
-import prettierConfig from '@codfish/eslint-config/prettier';
-export default prettierConfig;
+import codfish from '@codfish/eslint-config';
+import dapp from '@codfish/eslint-config/dapp';
+
+export default defineConfig(
+  codfish,
+  dapp,
+
+  {
+    // Your app-specific overrides
+  },
+);
 ```
 
 The dApp configuration provides:
@@ -229,6 +218,37 @@ The dApp configuration provides:
 - Blockchain-specific globals (`artifacts`, `contract`, `web3`, etc.)
 - Import resolution handling for smart contract build artifacts
 - Relaxed rules for generated contract files
+
+### Opinionated Highlights
+
+This configuration includes some opinionated settings that you might want to customize for your project:
+
+**Prettier/Formatting:**
+
+- **Semicolons**: Enforces semicolons (`;`)
+- **120 character line width**: Wider than the common 80/100 - you might prefer shorter lines
+- **2-space indentation**: Uses 2 spaces for tabs
+- **Single quotes**: Prefers `'single'` over `"double"` quotes
+- **Trailing commas**: Adds trailing commas everywhere
+- **Arrow parentheses**: Avoids parens around single args (`x => x` not `(x) => x`)
+
+**ESLint Rules:**
+
+- **Import sorting**: Enforces automatic import organization with specific grouping rules
+- **Lodash restrictions**: Requires direct imports (`import get from 'lodash-es/get'`) instead of full lodash
+- **React hooks deps**: Disables `exhaustive-deps` rule - you might want this stricter
+- **Console statements**: Disallows `console.log` in regular code (only allowed in test files) - some teams prefer
+  warnings instead of errors
+- **Next.js rules**: Enforces Next.js best practices and Core Web Vitals optimization
+- **Testing Library rules**: Enforces Testing Library best practices in test files
+
+**File Ignores:**
+
+- Ignores common build directories (`.next`, `coverage`, `.vercel`, etc.)
+- Includes `.github` and `.vitepress` folders (not ignored like most configs)
+
+See the [configuration examples below](#usage) for instructions on overriding these settings to match your team's
+preferences.
 
 ## Prettier Configuration
 
@@ -290,6 +310,27 @@ export default {
   bracketSameLine: false,
   arrowParens: 'avoid',
   proseWrap: 'always',
+};
+```
+
+### Use in combination with prettier-plugin-tailwindcss
+
+```sh
+npm i -D eslint@9 @codfish/eslint-config prettier-plugin-tailwindcss
+```
+
+```js
+// prettier.config.js
+
+import codfishPrettier from '@codfish/eslint-config/prettier';
+import tailwindcss from 'prettier-plugin-tailwindcss';
+
+/** @type {import('prettier').Config & import('prettier-plugin-tailwindcss').PluginOptions} */
+export default {
+  ...codfishPrettier,
+  plugins: ['prettier-plugin-tailwindcss'],
+  tailwindStylesheet: './src/styles/app.css',
+  tailwindFunctions: ['clsx'], // optional
 };
 ```
 
@@ -388,18 +429,6 @@ jobs:
       - run:
           npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }}
           --verbose
-```
-
-## Known issues
-
-> https://github.com/francoismassart/eslint-plugin-tailwindcss/issues/149
-
-When building dynamic classes, the auto sorting of tailwind classes can break things so beware.
-
-To avoid this happening you can re-wrap the dynamic class expression like so:
-
-```vue-html
-class="`p-0 ${`tw-border-${accentColor}`}`"
 ```
 
 ## Migration from Legacy Config

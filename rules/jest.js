@@ -29,7 +29,6 @@ export default defineConfig([
 
     rules: {
       'no-console': 'off',
-      ...ifAnyDep('tailwindcss', { 'tailwindcss/no-custom-classname': 'off' }, {}),
     },
   },
 ]);
