@@ -1,0 +1,43 @@
+name: Publish PR Version
+
+on: pull_request
+
+jobs:
+  publish-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24.x
+          registry-url: https://registry.npmjs.org
+
+      - run: npm install
+
+      - name: Publish to npm
+        id: publish
+        shell: bash
+        run: |
+          version="0.0.0-PR-${PR}--$(echo ${SHA} | cut -c -7)"
+          npm version $version --no-git-tag-version
+          npm publish --access public --tag pr
+          echo "version=$version" >> $GITHUB_OUTPUT
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          PR: ${{ github.event.number }}
+          SHA: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/github-script@v3
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🚀 PR version published: `${{ steps.publish.outputs.pr_version }}`'
+            })

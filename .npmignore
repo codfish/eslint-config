@@ -1,8 +1,0 @@
-node_modules
-.editorconfig
-.gitignore
-.travis.yml
-.eslintrc.js
-.prettierrc.js
-.lintstagedrc.js
-.huskyrc.js
