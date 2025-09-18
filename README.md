@@ -255,14 +255,7 @@ preferences.
 **Prettier is included and runs automatically** through ESLint for JavaScript, TypeScript, JSX, and TSX files using the
 [built-in configuration](./prettier.js). **You don't need to install or configure Prettier separately** for basic usage.
 
-However, if you want to format other file types (like Markdown, JSON, CSS, or YAML) or run Prettier directly, you can
-install it as a dev dependency:
-
-```sh
-npm i -D prettier
-```
-
-You can then override the defaults by creating your own Prettier config file, or extend the built-in config:
+You can then override the default config by creating your own Prettier config file, or extend the built-in config:
 
 **Option 1: Extend the built-in config (Recommended)**
 
@@ -313,6 +306,11 @@ export default {
 };
 ```
 
+> [!TIP]
+>
+> If you want to format other file types (like Markdown, JSON, CSS, or YAML) or run Prettier directly, you can install
+> it as a dev dependency: `npm i -D prettier`.
+
 ### Use in combination with prettier-plugin-tailwindcss
 
 ```sh
@@ -323,7 +321,6 @@ npm i -D eslint@9 @codfish/eslint-config prettier-plugin-tailwindcss
 // prettier.config.js
 
 import codfishPrettier from '@codfish/eslint-config/prettier';
-import tailwindcss from 'prettier-plugin-tailwindcss';
 
 /** @type {import('prettier').Config & import('prettier-plugin-tailwindcss').PluginOptions} */
 export default {
