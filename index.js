@@ -146,6 +146,16 @@ export default defineConfig([
   ymlPlugin.configs['flat/standard'],
   ymlPlugin.configs['flat/prettier'], // handles conflicting rules with the yml plugin
 
+  {
+    name: 'codfish/github-yml-overrides',
+
+    files: ['.github/**/*.yml', '.github/**/*.yaml'],
+
+    rules: {
+      'yml/no-empty-mapping-value': 'off', // somewhat common in github workflows
+    },
+  },
+
   // React configuration (dynamic)
   ifAnyDep('react', reactConfig, []),
 
