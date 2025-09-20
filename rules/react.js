@@ -38,8 +38,8 @@ export default defineConfig([
   ifAnyDep(
     'next',
     {
-      ...nextPlugin.flatConfig.recommended,
-      ...nextPlugin.flatConfig.coreWebVitals,
+      ...(nextPlugin?.flatConfig?.recommended || {}),
+      ...(nextPlugin?.flatConfig?.coreWebVitals || {}),
 
       name: 'codfish/next',
     },

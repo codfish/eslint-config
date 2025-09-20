@@ -20,12 +20,11 @@ const useBuiltinPrettierConfig = !hasLocalConfig('prettier');
  * Supports TypeScript, React, Jest, Vitest, Prettier, YAML, and Next.js
  */
 export default defineConfig([
-  // Base JavaScript configuration
   js.configs.recommended,
 
   tseslint.configs.recommended,
 
-  // Base configuration for all files
+  // Base opinionated rules
   {
     name: 'codfish/base',
 
@@ -44,6 +43,20 @@ export default defineConfig([
     },
 
     rules: {
+      // Error handling rules to enforce using the Error object
+      'no-throw-literal': 'error',
+      'prefer-promise-reject-errors': 'error',
+
+      // Asynchronous functions that don’t use await might not need to be asynchronous functions
+      // Usually result of refactoring, leads to misunderstanding/misusage
+      'require-await': 'error',
+
+      // Disallow console statements in regular code (only allowed in test files)
+      'no-console': 'error',
+
+      // Consolidate your imports
+      'no-duplicate-imports': ['error', { includeExports: false }],
+
       // Custom Grouping: https://github.com/lydell/eslint-plugin-simple-import-sort#custom-grouping
       // Examples: https://github.com/lydell/eslint-plugin-simple-import-sort/blob/main/examples/.eslintrc.js
       'simple-import-sort/imports': [
@@ -86,6 +99,36 @@ export default defineConfig([
               message: "Please use lodash-es direct import E.G: `import get from 'lodash-es/get'`",
             },
           ],
+        },
+      ],
+    },
+  },
+
+  {
+    name: 'codfish/ts-overrides',
+
+    files: ['**/*.ts', '**/*.tsx'],
+
+    rules: {
+      '@typescript-eslint/no-empty-function': 'off',
+      '@typescript-eslint/naming-convention': [
+        'error',
+        {
+          selector: ['interface', 'typeAlias'],
+          format: ['PascalCase'],
+          custom: {
+            regex: '^I[A-Z]', // prevent prefixing interfaces and type alias declarations with "I"
+            match: false,
+          },
+        },
+      ],
+      '@typescript-eslint/ban-ts-comment': [
+        'error',
+        {
+          // If you need to use a ts comment, make sure you have a description.
+          'ts-ignore': 'allow-with-description',
+          'ts-expect-error': 'allow-with-description',
+          'ts-nocheck': 'allow-with-description',
         },
       ],
     },

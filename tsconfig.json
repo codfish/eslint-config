@@ -23,5 +23,5 @@
     "noImplicitAny": false
   },
   "include": ["*.js", "**/*.js"],
-  "exclude": ["node_modules", "dist", "eslint.config.js"]
+  "exclude": ["node_modules", "dist", "eslint.config.js", "tests/**/*"]
 }
