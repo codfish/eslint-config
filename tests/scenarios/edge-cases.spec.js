@@ -37,7 +37,8 @@ export default message;
   });
 
   // Should still work with base configuration
-  expect(result.errorCount).toBeGreaterThan(-1); // Allow 0 or more errors, just ensure it doesn't crash
+  const fatalErrors = result.messages.filter(msg => msg.fatal);
+  expect(fatalErrors.length).toBe(0); // Ensure linting did not produce fatal errors
 });
 
 test('handles project with React but no TypeScript', async () => {
