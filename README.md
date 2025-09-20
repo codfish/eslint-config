@@ -48,7 +48,31 @@ Install the package and required peer dependencies:
 
 ```sh
 npm i -D eslint@9 @codfish/eslint-config
+
+# Optionally, you can uninstall plugins or presets you don't need to manage anymore,
+# @codfish/eslint-config includes them all.
+npm uninstall typescript-eslint \
+  eslint-config-prettier \
+  eslint-plugin-jest \
+  eslint-plugin-jsx-a11y \
+  eslint-plugin-prettier \
+  eslint-plugin-react \
+  eslint-plugin-react-hooks \
+  eslint-plugin-simple-import-sort \
+  eslint-plugin-testing-library \
+  eslint-plugin-yml \
+  @next/eslint-plugin-next \
+  eslint-plugin-next \
+  commitlint \
+  @commitlint/cli \
+  @commitlint/config-conventional
 ```
+
+> [!NOTE]
+>
+> Optionally, you can uninstall prettier as well. If you don't have prettier installed already but you want to format
+> other file types (like Markdown, JSON, CSS, etc.), you can install it as a dev dependency: `npm i -D prettier`. Then
+> you can use Prettier to format your non-JS files directly. Eslint will still run Prettier as an ESLint rule.
 
 ## Usage
 
@@ -306,11 +330,6 @@ export default {
 };
 ```
 
-> [!TIP]
->
-> If you want to format other file types (like Markdown, JSON, CSS, or YAML) or run Prettier directly, you can install
-> it as a dev dependency: `npm i -D prettier`.
-
 ### Use in combination with prettier-plugin-tailwindcss
 
 ```sh
@@ -320,11 +339,11 @@ npm i -D eslint@9 @codfish/eslint-config prettier-plugin-tailwindcss
 ```js
 // prettier.config.js
 
-import codfishPrettier from '@codfish/eslint-config/prettier';
+import codfish from '@codfish/eslint-config/prettier';
 
 /** @type {import('prettier').Config & import('prettier-plugin-tailwindcss').PluginOptions} */
 export default {
-  ...codfishPrettier,
+  ...codfish,
   plugins: ['prettier-plugin-tailwindcss'],
   tailwindStylesheet: './src/styles/app.css',
   tailwindFunctions: ['clsx'], // optional
