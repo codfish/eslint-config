@@ -95,8 +95,7 @@
     "dapp.js",
     "docker.js",
     "utils.js",
-    "commitlint.js",
-    "vitest.config.js"
+    "commitlint.js"
   ],
   "peerDependencies": {
     "eslint": ">= 9",

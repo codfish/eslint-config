@@ -1,4 +1,4 @@
-import nextPlugin from '@next/eslint-plugin-next';
+import { flatConfig } from '@next/eslint-plugin-next';
 import { defineConfig } from 'eslint/config';
 import jsxA11y from 'eslint-plugin-jsx-a11y';
 import react from 'eslint-plugin-react';
@@ -38,8 +38,8 @@ export default defineConfig([
   ifAnyDep(
     'next',
     {
-      ...nextPlugin.flatConfig.recommended,
-      ...nextPlugin.flatConfig.coreWebVitals,
+      ...flatConfig.recommended,
+      ...flatConfig.coreWebVitals,
 
       name: 'codfish/next',
     },
