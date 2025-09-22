@@ -97,7 +97,7 @@ interface Props {
 
 export function App({ title }: Props) {
   const [count, setCount] = useState(0);
-  
+
   return (
     <div>
       <h1>{title}</h1>
@@ -201,7 +201,7 @@ name: CI
 on:
   push:
     branches: [main]
-  pull_request:
+  pull_request_target:
     branches: [main]
 
 jobs:
