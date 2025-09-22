@@ -16,12 +16,9 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.ref }}
           fetch-depth: 0
 
-      - uses: actions/setup-node@v5
+      - uses: codfish/actions/setup-node-and-install@main
         with:
           node-version: ${{ matrix.node }}
-          registry-url: https://registry.npmjs.org
-
-      - run: npm install
 
       - run:
           npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }}

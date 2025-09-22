@@ -11,33 +11,11 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - uses: actions/setup-node@v5
+      - uses: codfish/actions/setup-node-and-install@main
         with:
-          node-version: 24.x
-          registry-url: https://registry.npmjs.org
+          node-version: lts/*
 
-      - run: npm install
-
-      - name: Publish to npm
-        id: publish
-        shell: bash
-        run: |
-          version="0.0.0-PR-${PR}--$(echo ${SHA} | cut -c -7)"
-          npm version $version --no-git-tag-version
-          npm publish --access public --tag pr
-          echo "version=$version" >> $GITHUB_OUTPUT
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          PR: ${{ github.event.number }}
-          SHA: ${{ github.event.pull_request.head.sha }}
-
-      - uses: actions/github-script@v3
+      - uses: codfish/actions/npm-publish-pr@main
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '🚀 PR version published: `${{ steps.publish.outputs.pr_version }}`'
-            })
+          npm-token: ${{ secrets.NPM_TOKEN }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
