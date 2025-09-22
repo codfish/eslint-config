@@ -179,6 +179,9 @@ export default defineConfig([
       '.tmp',
       '.eslintcache',
       '*.tsbuildinfo',
+      'node_modules',
+      'pnpm-lock.yaml',
+      'pnpm-lock.*.yaml',
     ],
   },
 
