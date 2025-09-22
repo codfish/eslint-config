@@ -145,7 +145,6 @@ export default defineConfig([
       'coverage',
       '.vercel',
       '**/logs/',
-      'bin/*',
       '**/dist/',
       '**/dist-ssr/',
       '**/cache/',
