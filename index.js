@@ -145,7 +145,6 @@ export default defineConfig([
       'coverage',
       '.vercel',
       '**/logs/',
-      'bin/*',
       '**/dist/',
       '**/dist-ssr/',
       '**/cache/',
@@ -179,6 +178,9 @@ export default defineConfig([
       '.tmp',
       '.eslintcache',
       '*.tsbuildinfo',
+      'node_modules',
+      'pnpm-lock.yaml',
+      'pnpm-lock.*.yaml',
     ],
   },
 

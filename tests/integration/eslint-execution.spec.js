@@ -313,6 +313,24 @@ var uglified = function() { console.log("bad formatting"); };
 // Should be ignored
 module.exports = {};
 `,
+    'coverage/lcov-report/index.html': `
+<!-- Coverage report - should be ignored -->
+<html><body>Coverage</body></html>
+`,
+    '.next/static/js/bundle.js': `
+// Next.js build file - should be ignored
+console.log("bad formatting");
+`,
+    'pnpm-lock.yaml': `
+# PNPM lock file - should be ignored
+lockfileVersion: '6.0'
+dependencies:
+  react: ^18.0.0
+`,
+    '.eslintcache': 'eslint cache file content',
+    '.turbo/cache/abc123.log': 'turbo cache file',
+    'storybook-static/index.html': '<html>Storybook static</html>',
+    '.vite/deps/react.js': '// Vite cache',
   };
 
   const tempDir = await createTempProject(files);
@@ -324,12 +342,23 @@ module.exports = {};
     const srcResults = results.filter(r => r.filePath.includes('/src/'));
     expect(srcResults.length).toBeGreaterThan(0);
 
-    // Should not lint dist or node_modules
-    const distResults = results.filter(r => r.filePath.includes('/dist/'));
-    const nodeModulesResults = results.filter(r => r.filePath.includes('/node_modules/'));
+    // Should not lint any of the ignored files/directories
+    const ignoredPaths = [
+      '/dist/',
+      '/node_modules/',
+      '/coverage/',
+      '/.next/',
+      'pnpm-lock.yaml',
+      '.eslintcache',
+      '/.turbo/',
+      '/storybook-static/',
+      '/.vite/',
+    ];
 
-    expect(distResults.length).toBe(0);
-    expect(nodeModulesResults.length).toBe(0);
+    ignoredPaths.forEach(ignoredPath => {
+      const ignoredResults = results.filter(r => r.filePath.includes(ignoredPath));
+      expect(ignoredResults.length).toBe(0);
+    });
   } finally {
     await rm(tempDir, { recursive: true, force: true });
   }

@@ -169,6 +169,11 @@ import codfish from '@codfish/eslint-config';
 export default defineConfig(
   codfish,
 
+  // Custom ignores
+  {
+    ignores: ['some-directory'],
+  },
+
   {
     files: ['**/*.spec.{js,ts,jsx,tsx}'],
     rules: {
