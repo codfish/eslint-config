@@ -1,7 +1,7 @@
 # @codfish/eslint-config
 
 > Modern ESLint configuration with TypeScript, React/Next.js, YAML, Testing Library, and testing framework support using
-> ESLint v9+ flat config format.
+> ESLint v9+ flat config format.d
 
 [![version](https://img.shields.io/npm/v/@codfish/eslint-config.svg)](http://npm.im/@codfish/eslint-config)
 [![downloads](https://img.shields.io/npm/dm/@codfish/eslint-config.svg)](http://npm-stat.com/charts.html?package=@codfish/eslint-config&from=2015-08-01)
