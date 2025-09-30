@@ -16,12 +16,14 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.ref }}
           fetch-depth: 0
 
-      - uses: codfish/actions/setup-node-and-install@main
+      - uses: codfish/actions/setup-node-and-install@v2
         with:
           node-version: ${{ matrix.node }}
 
       - run:
           npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }}
           --verbose
+
       - run: npm run lint
+
       - run: npm run type-check

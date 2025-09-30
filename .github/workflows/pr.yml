@@ -11,11 +11,11 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - uses: codfish/actions/setup-node-and-install@main
+      - uses: codfish/actions/setup-node-and-install@v2
         with:
           node-version: lts/*
 
-      - uses: codfish/actions/npm-publish-pr@main
+      - uses: codfish/actions/npm-publish-pr@v2
         with:
           npm-token: ${{ secrets.NPM_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
