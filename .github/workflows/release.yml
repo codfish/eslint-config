@@ -11,6 +11,9 @@ on:
       - next-major
       - '[0-9]+.x'
 
+permissions:
+  id-token: write
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -21,9 +24,9 @@ jobs:
       issues: write
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
-      - uses: actions/setup-node@v5
+      - uses: codfish/actions/setup-node-and-install@v3
         with:
           node-version: lts/*
 
@@ -37,7 +40,6 @@ jobs:
 
       # Types will be built automatically because of the prepublishOnly script
       - name: semantic release
-        uses: docker://ghcr.io/codfish/semantic-release-action@sha256:5d5447090feb2f9252aac2825ef14e244ecf53528fbe87d585b459adb547b914
+        uses: docker://ghcr.io/codfish/semantic-release-action@sha256:33086fe34542fd7e01c8efc8f1c57ae5204483d90df9c2c7445dec3db6108050
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

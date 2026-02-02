@@ -18,6 +18,8 @@
 - [Installation](#installation)
 - [Usage](#usage)
   - [Opinionated Highlights](#opinionated-highlights)
+- [IDE Setup](#ide-setup)
+  - [VS Code / Cursor](#vs-code--cursor)
 - [Prettier Configuration](#prettier-configuration)
   - [Use in combination with prettier-plugin-tailwindcss](#use-in-combination-with-prettier-plugin-tailwindcss)
 - [Example scripts](#example-scripts)
@@ -36,7 +38,7 @@
 - **Next.js support**: Automatically configures Next.js official plugin linting rules when detected
 - **Test framework agnostic**: Supports Jest and Vitest with automatic detection
 - **Testing Library integration**: Automatically includes Testing Library rules for test files
-- **YAML/YML support**: Built-in linting for YAML configuration files
+- **Multi-format support**: Built-in linting and formatting for Markdown, HTML, JSON, YAML/YML files
 - **Prettier integration**: Built-in Prettier configuration with conflict resolution via eslint-config-prettier
 - **ESM architecture**: Built with ECMAScript modules and full TypeScript typing
 - **Docker support**: Optional configuration for dockerized applications
@@ -58,6 +60,7 @@ npm uninstall typescript-eslint \
   eslint-plugin-prettier \
   eslint-plugin-react \
   eslint-plugin-react-hooks \
+  @tanstack/eslint-plugin-query \
   eslint-plugin-simple-import-sort \
   eslint-plugin-testing-library \
   eslint-plugin-yml \
@@ -65,14 +68,15 @@ npm uninstall typescript-eslint \
   eslint-plugin-next \
   commitlint \
   @commitlint/cli \
-  @commitlint/config-conventional
+  @commitlint/config-conventional \
+  prettier # optional, see note
 ```
 
 > [!NOTE]
 >
-> Optionally, you can uninstall prettier as well. If you don't have prettier installed already but you want to format
-> other file types (like Markdown, JSON, CSS, etc.), you can install it as a dev dependency: `npm i -D prettier`. Then
-> you can use Prettier to format your non-JS files directly. Eslint will still run Prettier as an ESLint rule.
+> ESLint now handles linting and formatting for JavaScript, TypeScript, Markdown, HTML, JSON, and YAML files
+> automatically. If you want to format additional file types (like CSS, SCSS, etc.), you can leave Prettier installed as
+> a dev dependency in your project.
 
 ## Usage
 
@@ -279,10 +283,47 @@ This configuration includes some opinionated settings that you might want to cus
 See the [configuration examples below](#usage) for instructions on overriding these settings to match your team's
 preferences.
 
+## IDE Setup
+
+### VS Code / Cursor
+
+For the best development experience with VS Code or Cursor (or any VS Code-based IDE), install the
+[ESLint extension](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) and configure it to
+auto-fix on save:
+
+Add these settings to your `.vscode/settings.json` or user settings:
+
+```json
+{
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "markdown",
+    "json",
+    "jsonc",
+    "html",
+    "yml",
+    "yaml"
+  ]
+}
+```
+
+This configuration enables:
+
+- Automatic linting and formatting on save for all supported file types
+- ESLint validation for Markdown, JSON, YAML, and HTML files
+- A unified development experience across your entire codebase
+
 ## Prettier Configuration
 
-**Prettier is included and runs automatically** through ESLint for JavaScript, TypeScript, JSX, and TSX files using the
-[built-in configuration](./prettier.js). **You don't need to install or configure Prettier separately** for basic usage.
+**Prettier is included and runs automatically** through ESLint for JavaScript, TypeScript, JSX, TSX, Markdown, HTML,
+JSON, and YAML files using the [built-in configuration](./prettier.js). **You don't need to install or configure
+Prettier separately** for these file types.
 
 You can then override the default config by creating your own Prettier config file, or extend the built-in config:
 
@@ -359,7 +400,7 @@ export default {
 
 Optionally, you can add these scripts to your `package.json` for common linting workflows:
 
-**Basic scripts (no separate Prettier installation needed):**
+**Recommended scripts:**
 
 ```json
 {
@@ -368,24 +409,32 @@ Optionally, you can add these scripts to your `package.json` for common linting 
     "fix": "eslint . --fix"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": ["eslint --fix"]
+    "*.{js,jsx,ts,tsx,md,json,yml,yaml,html}": ["eslint --fix"]
   }
 }
 ```
 
-**With Prettier installed separately (for formatting non-JS files):**
+> [!NOTE]
+>
+> ESLint now handles linting and formatting for JavaScript, TypeScript, Markdown, HTML, JSON, and YAML files. You don't
+> need to run Prettier separately for these file types.
+
+**With Prettier for other file types (CSS, SCSS, etc.):**
+
+If you want to format additional file types not covered by ESLint (like CSS, SCSS), you can install Prettier and add
+these scripts:
 
 ```json
 {
   "scripts": {
     "lint": "eslint .",
     "fix": "eslint . --fix",
-    "format": "prettier --config ./node_modules/@codfish/eslint-config/prettier.js --write \"**/*.{json,css,md}\"",
+    "format": "prettier --write \"**/*.{css,scss}\"",
     "check": "npm run lint && npm run format -- --check --no-write"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx}": ["eslint --fix"],
-    "*.{json,css,md}": ["prettier --write --config ./node_modules/@codfish/eslint-config/prettier.js"]
+    "*.{js,jsx,ts,tsx,md,json,yml,yaml,html}": ["eslint --fix"],
+    "*.{css,scss}": ["prettier --write"]
   }
 }
 ```

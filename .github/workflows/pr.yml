@@ -2,20 +2,25 @@ name: Publish PR Version
 
 on: pull_request_target
 
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+
 jobs:
   publish-pr:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - uses: codfish/actions/setup-node-and-install@v2
+      - uses: codfish/actions/setup-node-and-install@v3
         with:
           node-version: lts/*
 
-      - uses: codfish/actions/npm-publish-pr@v2
+      - uses: codfish/actions/npm-publish-pr@v3
         with:
           npm-token: ${{ secrets.NPM_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
