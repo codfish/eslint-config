@@ -30,8 +30,12 @@ export default defineConfig({
   extends: [
     ifAnyDep('jest', jest.configs['flat/recommended'], false),
     ifAnyDep('vitest', vitest.configs.recommended, false),
-    ifAnyDep('react-testing-library', testingLibrary.configs['flat/react'], false),
-    ifAnyDep('vue-testing-library', testingLibrary.configs['flat/vue'], false),
+    ifAnyDep('@testing-library/dom', testingLibrary.configs['flat/dom'], false),
+    ifAnyDep('@testing-library/react', testingLibrary.configs['flat/react'], false),
+    ifAnyDep('@testing-library/vue', testingLibrary.configs['flat/vue'], false),
+    ifAnyDep('@testing-library/svelte', testingLibrary.configs['flat/svelte'], false),
+    ifAnyDep('@testing-library/angular', testingLibrary.configs['flat/angular'], false),
+    ifAnyDep('@testing-library/marko', testingLibrary.configs['flat/marko'], false),
   ].filter(Boolean),
 
   languageOptions: {
