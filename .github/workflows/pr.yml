@@ -54,7 +54,7 @@ jobs:
           name: package-tarball
 
       - name: Publish PR package
-        uses: codfish/actions/npm-pr-version@v3
+        uses: codfish/actions/npm-publish-pr@v3
         with:
           tarball: '*.tgz'
           npm-token: ${{ secrets.NPM_TOKEN }}
