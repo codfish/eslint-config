@@ -38,6 +38,6 @@ jobs:
           CI: true
 
       - name: semantic release
-        uses: docker://ghcr.io/codfish/semantic-release-action@sha256:33086fe34542fd7e01c8efc8f1c57ae5204483d90df9c2c7445dec3db6108050
+        uses: codfish/semantic-release-action@upgrades
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
