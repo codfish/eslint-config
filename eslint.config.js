@@ -13,4 +13,11 @@ export default defineConfig(
       },
     },
   },
+
+  {
+    files: ['*.js', '**/*.js'],
+    rules: {
+      'no-restricted-imports': 'off',
+    },
+  },
 );

@@ -1,10 +1,16 @@
-import { afterEach, beforeEach, expect, test, vi } from 'vitest';
+import { cosmiconfigSync } from 'cosmiconfig';
 
 import { hasAnyDep, hasDep, hasLocalConfig, ifAnyDep } from '../../utils.js';
 
 // Mock cosmiconfig
 vi.mock('cosmiconfig', () => ({
-  cosmiconfigSync: vi.fn(),
+  cosmiconfigSync: vi.fn().mockReturnValue({
+    search: vi.fn().mockReturnValue({ config: {} }),
+    load: vi.fn(),
+    clearLoadCache: vi.fn(),
+    clearSearchCache: vi.fn(),
+    clearCaches: vi.fn(),
+  }),
 }));
 
 beforeEach(() => {
@@ -61,37 +67,27 @@ test('hasDep checks only production dependencies', () => {
   expect(hasDep('prettier')).toBe(true);
 });
 
-test('hasLocalConfig returns boolean value', async () => {
-  const { cosmiconfigSync } = await import('cosmiconfig');
-  const mockExplorer = {
-    search: vi.fn().mockReturnValue({ config: {} }),
-  };
-  vi.mocked(cosmiconfigSync).mockReturnValue(mockExplorer);
-
+test('hasLocalConfig returns boolean value', () => {
   const result = hasLocalConfig('prettier');
   expect(typeof result).toBe('boolean');
   expect(result).toBe(true);
 });
 
-test('hasLocalConfig returns false when no config found', async () => {
-  const { cosmiconfigSync } = await import('cosmiconfig');
-  const mockExplorer = {
+test('hasLocalConfig returns false when no config found', () => {
+  vi.mocked(cosmiconfigSync).mockReturnValue({
     search: vi.fn().mockReturnValue(null),
-  };
-  vi.mocked(cosmiconfigSync).mockReturnValue(mockExplorer);
-
+    load: vi.fn(),
+    clearLoadCache: vi.fn(),
+    clearSearchCache: vi.fn(),
+    clearCaches: vi.fn(),
+  });
   const result = hasLocalConfig('some-fake-config');
   expect(result).toBe(false);
 });
 
-test('hasLocalConfig accepts search options', async () => {
-  const { cosmiconfigSync } = await import('cosmiconfig');
-  const mockExplorer = {
-    search: vi.fn().mockReturnValue(null),
-  };
-  vi.mocked(cosmiconfigSync).mockReturnValue(mockExplorer);
-
+test('hasLocalConfig accepts search options', () => {
   const options = { stopDir: process.cwd() };
   hasLocalConfig('eslint', options);
+  expect(cosmiconfigSync).toHaveBeenCalledWith('eslint', options);
   expect(cosmiconfigSync).toHaveBeenCalledWith('eslint', options);
 });

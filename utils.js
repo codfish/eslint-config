@@ -8,12 +8,9 @@
 import fs from 'node:fs';
 import { cosmiconfigSync } from 'cosmiconfig';
 import has from 'lodash.has';
-import { readPackageUp } from 'read-package-up';
+import { readPackageUpSync } from 'read-package-up';
 
-const { packageJson: pkg, path: pkgPath } =
-  (await readPackageUp({
-    cwd: fs.realpathSync(process.cwd()),
-  })) || {};
+const { packageJson: pkg, path: pkgPath } = readPackageUpSync({ cwd: fs.realpathSync(process.cwd()) }) || {};
 
 const hasPkgProp = props => [props].flat().some(prop => has(pkg, prop));
 const hasPkgSubProp = pkgProp => props => hasPkgProp([props].flat().map(p => `${pkgProp}.${p}`));

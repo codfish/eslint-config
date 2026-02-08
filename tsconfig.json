@@ -20,8 +20,9 @@
     "resolveJsonModule": false,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "types": ["vitest/globals"]
   },
   "include": ["*.js", "**/*.js"],
-  "exclude": ["node_modules", "dist", "eslint.config.js", "tests/**/*"]
+  "exclude": ["node_modules", "dist", "eslint.config.js", "coverage"]
 }
