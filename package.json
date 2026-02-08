@@ -56,7 +56,7 @@
   "dependencies": {
     "@commitlint/cli": "^20.4.0",
     "@commitlint/config-conventional": "^20.4.0",
-    "@eslint/js": "^9.35.0",
+    "@eslint/js": "^10.0.0",
     "@eslint/json": "^1.0.0",
     "@eslint/markdown": "^7.5.1",
     "@html-eslint/eslint-plugin": "^0.54.2",
@@ -84,7 +84,7 @@
   "devDependencies": {
     "@vitest/coverage-v8": "^4.0.18",
     "doctoc": "^2.2.1",
-    "eslint": "^9.35.0",
+    "eslint": "^10.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.6",
     "typescript": "^5.9.2",
