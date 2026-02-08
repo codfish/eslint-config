@@ -4,7 +4,7 @@ import markdown from '@eslint/markdown';
 import html from '@html-eslint/eslint-plugin';
 import htmlParser from '@html-eslint/parser';
 import { defineConfig } from 'eslint/config';
-import prettierPlugin from 'eslint-plugin-prettier';
+import prettierConfig from 'eslint-plugin-prettier/recommended';
 import simpleImportSortPlugin from 'eslint-plugin-simple-import-sort';
 import ymlPlugin from 'eslint-plugin-yml';
 import globals from 'globals';
@@ -294,7 +294,7 @@ export default defineConfig([
       // Allow GitHub-style alerts and checkbox syntax (task lists)
       'markdown/no-missing-label-refs': [
         'error',
-        { allowLabels: ['!NOTE', '!WARNING', '!IMPORTANT', '!TIP', '', 'x', 'X'] },
+        { allowLabels: ['!NOTE', '!WARNING', '!IMPORTANT', '!TIP', '!CAUTION', '', 'x', 'X'] },
       ],
     },
   },
@@ -313,9 +313,7 @@ export default defineConfig([
   {
     files: ['**/*.{js,ts,jsx,tsx,md,yml,yaml,html,json,jsonc,json5}'],
 
-    plugins: {
-      prettier: prettierPlugin,
-    },
+    extends: [prettierConfig],
 
     rules: {
       // Reset prettier rule passing in custom prettier config.
