@@ -19,7 +19,6 @@ jobs:
       contents: write # to be able to publish a GitHub release
       issues: write # to be able to comment on released issues
       pull-requests: write # to be able to comment on released pull requests
-      id-token: write # to enable use of OIDC for trusted publishing and npm provenance
 
     steps:
       - uses: actions/checkout@v6
@@ -27,10 +26,12 @@ jobs:
       - uses: codfish/actions/setup-node-and-install@v3
         with:
           node-version: lts/*
+          # Required until all ESLint plugins update their peer dependencies to support ESLint 10
+          npm-install-args: --legacy-peer-deps
 
       - name: validate & build before release
         run: |
-          npm install --no-save
+          npm install --no-save --legacy-peer-deps
           npm run lint
           npm run typecheck
           npm run build
