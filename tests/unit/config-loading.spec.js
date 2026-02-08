@@ -54,5 +54,5 @@ test('contains YAML configuration', () => {
 test('ends with prettier configuration', () => {
   const lastConfig = config[config.length - 1];
   expect(lastConfig.rules).toBeDefined();
-  expect(lastConfig.rules['prettier/prettier']).toBeDefined();
+  expect(lastConfig.rules?.['prettier/prettier']).toBeDefined();
 });
