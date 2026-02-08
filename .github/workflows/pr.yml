@@ -1,6 +1,6 @@
 name: Publish PR Version
 
-on: pull_request_target
+on: pull_request
 
 jobs:
   build:
@@ -19,7 +19,7 @@ jobs:
         with:
           node-version: lts/*
           # Required until all ESLint plugins update their peer dependencies to support ESLint 10
-          npm-install-args: --legacy-peer-deps
+          install-options: --legacy-peer-deps
 
       - name: Build package
         run: npm run build --if-present
@@ -50,7 +50,7 @@ jobs:
         with:
           node-version: lts/*
           # Required until all ESLint plugins update their peer dependencies to support ESLint 10
-          npm-install-args: --legacy-peer-deps
+          install-options: --legacy-peer-deps
 
       - name: Download package tarball
         uses: actions/download-artifact@v7

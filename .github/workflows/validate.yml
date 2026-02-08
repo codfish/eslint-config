@@ -21,7 +21,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           # Required until all ESLint plugins update their peer dependencies to support ESLint 10
-          npm-install-args: --legacy-peer-deps
+          install-options: --legacy-peer-deps
 
       - run:
           npx commitlint --from ${{ github.event.pull_request.base.sha }} --to ${{ github.event.pull_request.head.sha }}

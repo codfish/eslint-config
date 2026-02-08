@@ -27,7 +27,7 @@ jobs:
         with:
           node-version: lts/*
           # Required until all ESLint plugins update their peer dependencies to support ESLint 10
-          npm-install-args: --legacy-peer-deps
+          install-options: --legacy-peer-deps
 
       - name: validate & build before release
         run: |
