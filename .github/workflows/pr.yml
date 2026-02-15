@@ -1,6 +1,6 @@
 name: Publish PR Version
 
-on: pull_request_target
+on: pull_request
 
 jobs:
   build:
@@ -54,7 +54,7 @@ jobs:
           name: package-tarball
 
       - name: Publish PR package
-        uses: codfish/actions/npm-publish-pr@v3
+        uses: codfish/actions/npm-publish-pr@fix/tarball-mode-auth
         with:
           tarball: '*.tgz'
           npm-token: ${{ secrets.NPM_TOKEN }}
