@@ -18,6 +18,8 @@ jobs:
         uses: codfish/actions/setup-node-and-install@v3
         with:
           node-version: lts/*
+          # Required until all ESLint plugins update their peer dependencies to support ESLint 10
+          install-options: --legacy-peer-deps
 
       - name: Build package
         run: npm run build --if-present
@@ -47,6 +49,8 @@ jobs:
         uses: codfish/actions/setup-node-and-install@v3
         with:
           node-version: lts/*
+          # Required until all ESLint plugins update their peer dependencies to support ESLint 10
+          install-options: --legacy-peer-deps
 
       - name: Download package tarball
         uses: actions/download-artifact@v7

@@ -1,7 +1,7 @@
 # @codfish/eslint-config
 
 > Modern ESLint configuration with TypeScript, React/Next.js, YAML, Testing Library, and testing framework support using
-> ESLint v9+ flat config format.
+> ESLint v10+ flat config format.
 
 [![version](https://img.shields.io/npm/v/@codfish/eslint-config.svg)](http://npm.im/@codfish/eslint-config)
 [![downloads](https://img.shields.io/npm/dm/@codfish/eslint-config.svg)](http://npm-stat.com/charts.html?package=@codfish/eslint-config&from=2015-08-01)
@@ -24,6 +24,10 @@
   - [Use in combination with prettier-plugin-tailwindcss](#use-in-combination-with-prettier-plugin-tailwindcss)
 - [Example scripts](#example-scripts)
 - [Commitlint Configuration](#commitlint-configuration)
+- [Upgrading to ESLint 10](#upgrading-to-eslint-10)
+  - [Breaking Changes in ESLint 10](#breaking-changes-in-eslint-10)
+  - [Migration Steps](#migration-steps)
+  - [What Changed](#what-changed)
 - [Migration from Legacy Config](#migration-from-legacy-config)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -31,7 +35,7 @@
 
 ## Features
 
-- **Modern ESLint v9+ flat config**: Uses the new flat configuration format
+- **Modern ESLint v10+ flat config**: Uses the new flat configuration format
 - **Dynamic feature detection**: Automatically configures based on your project's dependencies
 - **TypeScript support**: Full TypeScript linting with modern typescript-eslint parser and rules
 - **React ecosystem**: React, React Hooks, and JSX accessibility rules when React is detected
@@ -49,7 +53,7 @@
 Install the package and required peer dependencies:
 
 ```sh
-npm i -D eslint@9 @codfish/eslint-config
+npm i -D eslint@10 @codfish/eslint-config
 
 # Optionally, you can uninstall plugins or presets you don't need to manage anymore,
 # @codfish/eslint-config includes them all.
@@ -379,7 +383,7 @@ export default {
 ### Use in combination with prettier-plugin-tailwindcss
 
 ```sh
-npm i -D eslint@9 @codfish/eslint-config prettier-plugin-tailwindcss
+npm i -D eslint@10 @codfish/eslint-config prettier-plugin-tailwindcss
 ```
 
 ```js
@@ -501,11 +505,72 @@ jobs:
           --verbose
 ```
 
+## Upgrading to ESLint 10
+
+This package now requires **ESLint 10.0.0 or higher** and **Node.js v20.19.0 or higher**.
+
+### Breaking Changes in ESLint 10
+
+- **ESLint 10 Required**: Minimum ESLint version is now 10.0.0
+- **Node.js v20.19.0+**: Minimum Node.js version increased from v20.0.0 to v20.19.0
+- **Legacy eslintrc removed**: ESLint 10 completely removes the deprecated eslintrc config system (this package already
+  uses flat config)
+- **Improved JSX tracking**: ESLint 10 properly tracks JSX references in scope analysis, which may surface previously
+  hidden unused import warnings in React files
+- **New recommended rules**: Three new rules enabled in `eslint:recommended`:
+  - `no-unassigned-vars` - Disallow variables that are assigned but never used
+  - `no-useless-assignment` - Disallow assignments that don't change the value
+  - `preserve-caught-error` - Enforce that caught errors are not reassigned
+
+### Migration Steps
+
+1. **Update Node.js** (if needed):
+
+   ```sh
+   node --version  # Ensure you're on v20.19.0+ or v22.13.0+
+   ```
+
+2. **Update ESLint and this config**:
+
+   ```sh
+   npm install --save-dev eslint@10 @codfish/eslint-config@latest
+   ```
+
+3. **Install dependencies with legacy peer deps** (required until all plugins update):
+
+   ```sh
+   npm install --legacy-peer-deps
+   ```
+
+   This is necessary because some ESLint plugins haven't updated their `peerDependencies` to include ESLint 10 yet. The
+   plugins still work correctly with ESLint 10.
+
+4. **Run linting** and check for new violations:
+
+   ```sh
+   npm run lint
+   ```
+
+5. **Review React files** for newly reported unused imports. ESLint 10's improved JSX tracking may flag imports that
+   were previously ignored but are actually used in JSX.
+
+### What Changed
+
+Since this package already uses ESLint's flat config format (the biggest change in ESLint 9), the upgrade to ESLint 10
+is relatively smooth. The main changes are:
+
+- ✅ Flat config format (already implemented)
+- ✅ Plugin configurations updated to ESLint 10-compatible versions
+- ✅ All tests passing with ESLint 10
+- ⚠️ Some plugins show peer dependency warnings but work correctly (ecosystem is catching up)
+
+For more details, see the [ESLint 10 Migration Guide](https://eslint.org/docs/latest/use/migrate-to-10.0.0).
+
 ## Migration from Legacy Config
 
 If you're upgrading from an older version that used Airbnb presets:
 
-1. **Update to ESLint v9+**: `npm install --save-dev eslint@9`
+1. **Update to ESLint v10+**: `npm install --save-dev eslint@10`
 2. **Switch to flat config**: Replace `.eslintrc.js` with `eslint.config.js`
 3. **Use import syntax**: Change from `require()` to `import` statements
 4. **Remove explicit React config**: React support is now automatically detected

@@ -21,7 +21,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals", "node"]
   },
   "include": ["*.js", "**/*.js"],
   "exclude": ["node_modules", "dist", "eslint.config.js", "coverage"]
