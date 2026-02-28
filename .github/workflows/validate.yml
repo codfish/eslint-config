@@ -9,7 +9,7 @@ jobs:
     strategy:
       matrix:
         # ESLint 10 requires Node.js v20.19.0+, v22.13.0+, or v24+
-        node: [20.19.0, 22.13.0, 24.x]
+        node: [20.x, 22.x, 24.x, 25.x]
 
     steps:
       - uses: actions/checkout@v6
