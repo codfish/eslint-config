@@ -28,7 +28,7 @@ jobs:
         run: npm pack
 
       - name: Upload package tarball
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7
         with:
           name: package-tarball
           path: '*.tgz'
@@ -53,7 +53,7 @@ jobs:
           install-options: --legacy-peer-deps
 
       - name: Download package tarball
-        uses: actions/download-artifact@v7
+        uses: actions/download-artifact@v8
         with:
           name: package-tarball
 
