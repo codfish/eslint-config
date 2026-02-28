@@ -53,9 +53,18 @@ export default message;
     devDependencies: {},
   });
 
-  // Should still work with base configuration
+  // Should still work with base configuration (no "Cannot find module 'typescript'" error)
   const fatalErrors = result.messages.filter(msg => msg.fatal);
-  expect(fatalErrors.length).toBe(0); // Ensure linting did not produce fatal errors
+  expect(fatalErrors.length).toBe(0);
+});
+
+test('config loads without TypeScript when project has no typescript dependency', async () => {
+  // Explicitly verifies the "no typescript" path: config must load and lint JS
+  // without throwing "Cannot find module 'typescript'" (typescript-eslint is not loaded)
+  const result = await lintWithMockedDeps('const x = 1;\nexport { x };', 'src/index.js', { name: 'js-only-project' });
+  expect(result.messages.some(m => m.message?.includes("Cannot find module 'typescript'"))).toBe(false);
+  const fatalErrors = result.messages.filter(msg => msg.fatal);
+  expect(fatalErrors.length).toBe(0);
 });
 
 test('handles project with React but no TypeScript', async () => {

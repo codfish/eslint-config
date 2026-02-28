@@ -121,6 +121,21 @@ function greet(user: User): string {
   expect(syntaxErrors.length).toBe(0);
 });
 
+test('TypeScript @typescript-eslint rules are applied', async () => {
+  const code = `
+const unusedVariable = 42;
+export const used = 1;
+`;
+
+  const result = await lintCode(code, 'src/module.ts');
+
+  // @typescript-eslint/no-unused-vars should flag the unused variable
+  const unusedVarErrors = result.messages.filter(
+    msg => msg.ruleId === '@typescript-eslint/no-unused-vars' && msg.message?.includes('unusedVariable'),
+  );
+  expect(unusedVarErrors.length).toBeGreaterThan(0);
+});
+
 test('React JSX files get React rules', async () => {
   const code = `
 import React from 'react';

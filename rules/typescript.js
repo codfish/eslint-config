@@ -9,7 +9,7 @@ import { hasAnyDep } from '../utils.js';
 const hasTypeScript = hasAnyDep('typescript');
 const tseslintConfig =
   /** @type {import('eslint').Linter.Config[]} */
-  (hasTypeScript ? [(await import('typescript-eslint')).default.configs.recommended] : []);
+  (hasTypeScript ? [(await import('typescript-eslint')).configs.recommended] : []);
 
 export default tseslintConfig;
 
