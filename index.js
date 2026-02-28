@@ -8,14 +8,13 @@ import prettierConfig from 'eslint-plugin-prettier/recommended';
 import simpleImportSortPlugin from 'eslint-plugin-simple-import-sort';
 import ymlPlugin from 'eslint-plugin-yml';
 import globals from 'globals';
-import tseslint from 'typescript-eslint';
 
 import prettierBuiltInConfig from './prettier.js';
 import configFilesConfig from './rules/config-files.js';
 import reactConfig from './rules/react.js';
 import testConfig from './rules/tests.js';
+import tseslintConfig, { rules as tsRules } from './rules/typescript.js';
 import { hasLocalConfig, ifAnyDep } from './utils.js';
-
 const useBuiltinPrettierConfig = !hasLocalConfig('prettier');
 
 /**
@@ -34,7 +33,7 @@ export default defineConfig([
 
     files: ['**/*.{js,mjs,cjs,jsx,ts,mts,cts,tsx}'],
 
-    extends: [js.configs.recommended, tseslint.configs.recommended],
+    extends: [js.configs.recommended, ...tseslintConfig],
 
     plugins: {
       'simple-import-sort': simpleImportSortPlugin,
@@ -43,6 +42,9 @@ export default defineConfig([
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
+      parserOptions: {
+        ecmaFeatures: { jsx: true },
+      },
       globals: {
         ...globals.browser,
         ...globals.node,
@@ -54,8 +56,10 @@ export default defineConfig([
       // Error handling rules to enforce using the Error object
       'no-throw-literal': 'error',
       'prefer-promise-reject-errors': 'error',
+      'no-unused-vars': ['error', { ignoreRestSiblings: true }],
+      'no-empty-function': 'off',
 
-      // Asynchronous functions that don’t use await might not need to be asynchronous functions
+      // Asynchronous functions that don't use await might not need to be asynchronous functions
       // Usually result of refactoring, leads to misunderstanding/misusage
       'require-await': 'error',
 
@@ -84,44 +88,6 @@ export default defineConfig([
       ],
       'simple-import-sort/exports': 'error',
       'sort-imports': 'off',
-
-      // Allows destructuring of rest properties even if they are unused
-      '@typescript-eslint/no-unused-vars': ['error', { ignoreRestSiblings: true }],
-      '@typescript-eslint/no-empty-function': 'off',
-      '@typescript-eslint/naming-convention': [
-        'error',
-        {
-          selector: ['interface', 'typeAlias'],
-          format: ['PascalCase'],
-          custom: {
-            regex: '^I[A-Z]', // prevent prefixing interfaces and type alias declarations with "I"
-            match: false,
-          },
-        },
-      ],
-      '@typescript-eslint/ban-ts-comment': [
-        'error',
-        {
-          // If you need to use a ts comment, make sure you have a description.
-          'ts-ignore': 'allow-with-description',
-          'ts-expect-error': 'allow-with-description',
-          'ts-nocheck': 'allow-with-description',
-        },
-      ],
-
-      '@typescript-eslint/no-restricted-types': [
-        'error',
-        {
-          types: {
-            'React.FC': {
-              message: 'Useless and has some drawbacks, see https://github.com/facebook/create-react-app/pull/8177',
-            },
-            'React.FunctionComponent': {
-              message: 'Useless and has some drawbacks, see https://github.com/facebook/create-react-app/pull/8177',
-            },
-          },
-        },
-      ],
 
       // 1. Encouraging `lodash-es` imports per file
       // lodash imports should use `lodash-es` package and should be imported per file.
@@ -170,6 +136,9 @@ export default defineConfig([
           ],
         },
       ],
+
+      // TypeScript rules (empty object when typescript is not installed)
+      ...tsRules,
     },
   },
 
