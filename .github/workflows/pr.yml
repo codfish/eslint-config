@@ -62,3 +62,4 @@ jobs:
         with:
           tarball: '*.tgz'
           npm-token: ${{ secrets.NPM_TOKEN }}
+          dev: true

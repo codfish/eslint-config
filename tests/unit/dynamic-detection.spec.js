@@ -32,6 +32,23 @@ test('excludes React configuration when React is not detected', async () => {
   expect(hasReactConfig).toBe(false);
 });
 
+// TypeScript Configuration
+test('includes TypeScript configuration when TypeScript is detected', async () => {
+  mockPkg({ devDependencies: { typescript: '^5.0.0' } });
+  const { default: config } = await import('../../index.js');
+
+  const baseConfig = config.find(item => item.name === 'codfish/base');
+  expect(baseConfig?.rules?.['@typescript-eslint/no-unused-vars']).toBeDefined();
+});
+
+test('excludes TypeScript configuration when TypeScript is not detected', async () => {
+  mockPkg();
+  const { default: config } = await import('../../index.js');
+
+  const baseConfig = config.find(item => item.name === 'codfish/base');
+  expect(baseConfig?.rules?.['@typescript-eslint/no-unused-vars']).toBeUndefined();
+});
+
 // Test Framework Configuration
 test('includes test configuration when Vitest is detected', async () => {
   mockPkg({ devDependencies: { vitest: '^1.0.0' } });

@@ -1,22 +1,39 @@
 import { ESLint } from 'eslint';
-import { readPackageUp } from 'read-package-up';
+import { readPackageUpSync } from 'read-package-up';
 import { expect, test, vi } from 'vitest';
 
-// Mock read-package-up for scenario testing
-vi.mock('read-package-up');
+// Mock read-package-up for scenario testing (utils.js uses readPackageUpSync)
+vi.mock('read-package-up', () => ({
+  readPackageUpSync: vi.fn(),
+}));
 
 // Helper to lint with mocked dependencies
-async function lintWithMockedDeps(code, filename, mockPackageJson) {
-  vi.mocked(readPackageUp).mockResolvedValue({
+async function lintWithMockedDeps(code, filename, mockPackageJson, overrides = {}) {
+  vi.mocked(readPackageUpSync).mockReturnValue({
     packageJson: mockPackageJson,
     path: '/mock/package.json',
   });
 
-  // Import the config fresh for this test
+  vi.resetModules();
   const { default: config } = await import('../../index.js');
+
+  // Use explicit React/Jest versions to avoid plugin resolution that fails with lintText + virtual paths
+  const mockDeps = {
+    ...mockPackageJson.dependencies,
+    ...mockPackageJson.devDependencies,
+  };
+  const overrideConfig = {
+    ...overrides,
+    settings: {
+      ...overrides.settings,
+      ...(mockDeps?.react && { react: { version: '18.0' } }),
+      ...(mockDeps?.jest && { jest: { version: 29 } }),
+    },
+  };
 
   const eslint = new ESLint({
     baseConfig: config,
+    overrideConfig: [overrideConfig],
     overrideConfigFile: true,
   });
 
@@ -36,9 +53,18 @@ export default message;
     devDependencies: {},
   });
 
-  // Should still work with base configuration
+  // Should still work with base configuration (no "Cannot find module 'typescript'" error)
   const fatalErrors = result.messages.filter(msg => msg.fatal);
-  expect(fatalErrors.length).toBe(0); // Ensure linting did not produce fatal errors
+  expect(fatalErrors.length).toBe(0);
+});
+
+test('config loads without TypeScript when project has no typescript dependency', async () => {
+  // Explicitly verifies the "no typescript" path: config must load and lint JS
+  // without throwing "Cannot find module 'typescript'" (typescript-eslint is not loaded)
+  const result = await lintWithMockedDeps('const x = 1;\nexport { x };', 'src/index.js', { name: 'js-only-project' });
+  expect(result.messages.some(m => m.message?.includes("Cannot find module 'typescript'"))).toBe(false);
+  const fatalErrors = result.messages.filter(msg => msg.fatal);
+  expect(fatalErrors.length).toBe(0);
 });
 
 test('handles project with React but no TypeScript', async () => {
@@ -61,7 +87,7 @@ export default Component;
 
   // Should parse JSX without TypeScript errors
   const fatalErrors = result.messages.filter(msg => msg.fatal);
-  expect(fatalErrors.length).toBe(0);
+  expect(fatalErrors).toEqual([]);
 });
 
 test('handles project with TypeScript but no React', async () => {
