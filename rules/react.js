@@ -7,7 +7,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import globals from 'globals';
 
-import { ifAnyDep } from '../utils.js';
+import { getDepVersion, ifAnyDep } from '../utils.js';
 
 /**
  * React ESLint configuration. Includes React, React Hooks, and JSX accessibility rules.
@@ -41,7 +41,9 @@ export default defineConfig([
 
     settings: {
       react: {
-        version: 'detect',
+        // Avoid 'detect' — it uses context.getFilename() which was removed in ESLint 10.
+        // Read the major version from the consumer's package.json instead.
+        version: getDepVersion('react') || 'detect',
       },
     },
 
