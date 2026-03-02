@@ -23,6 +23,17 @@ export const hasAnyDep = args => [hasDep, hasDevDep, hasPeerDep].some(fn => fn(a
 
 export const ifAnyDep = (deps, t, f) => (hasAnyDep([deps].flat()) ? t : f);
 
+/**
+ * Get the version of a dependency from the consumer's package.json.
+ * Returns the major version as a string (e.g. '18', '19'), or null if not found.
+ */
+export function getDepVersion(dep) {
+  const spec = pkg?.dependencies?.[dep] || pkg?.devDependencies?.[dep] || pkg?.peerDependencies?.[dep];
+  if (!spec) return null;
+  const match = spec.match(/\d+/);
+  return match ? match[0] : null;
+}
+
 export function hasLocalConfig(moduleName, searchOptions = {}) {
   const explorerSync = cosmiconfigSync(moduleName, searchOptions);
   const result = explorerSync.search(pkgPath || './');
