@@ -58,7 +58,7 @@
     "@commitlint/config-conventional": "^20.4.2",
     "@eslint/js": "^10.0.0",
     "@eslint/json": "^1.0.1",
-    "@eslint/markdown": "^7.5.1",
+    "@eslint/markdown": "^8.0.0",
     "@html-eslint/eslint-plugin": "^0.58.0",
     "@html-eslint/parser": "^0.58.0",
     "@next/eslint-plugin-next": "^16.1.6",
