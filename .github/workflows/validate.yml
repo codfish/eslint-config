@@ -17,7 +17,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha || github.ref }}
           fetch-depth: 0
 
-      - uses: codfish/actions/setup-node-and-install@v3
+      - uses: codfish/actions/setup-node-and-install@1b3543a33a4923d92511236b76a5708b433a2f61 # v4
         with:
           node-version: ${{ matrix.node }}
           # Required until all ESLint plugins update their peer dependencies to support ESLint 10

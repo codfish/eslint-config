@@ -15,7 +15,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Setup Node and install dependencies
-        uses: codfish/actions/setup-node-and-install@v3
+        uses: codfish/actions/setup-node-and-install@1b3543a33a4923d92511236b76a5708b433a2f61 # v4
         with:
           node-version: lts/*
           # Required until all ESLint plugins update their peer dependencies to support ESLint 10
@@ -46,7 +46,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Setup Node
-        uses: codfish/actions/setup-node-and-install@v3
+        uses: codfish/actions/setup-node-and-install@1b3543a33a4923d92511236b76a5708b433a2f61 # v4
         with:
           node-version: lts/*
           # Required until all ESLint plugins update their peer dependencies to support ESLint 10
@@ -58,7 +58,7 @@ jobs:
           name: package-tarball
 
       - name: Publish PR package
-        uses: codfish/actions/npm-publish-pr@v3
+        uses: codfish/actions/npm-publish-pr@1b3543a33a4923d92511236b76a5708b433a2f61 # v4
         with:
           tarball: '*.tgz'
           npm-token: ${{ secrets.NPM_TOKEN }}
