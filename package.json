@@ -54,8 +54,8 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@commitlint/cli": "^20.4.2",
-    "@commitlint/config-conventional": "^20.4.2",
+    "@commitlint/cli": "^21.0.0",
+    "@commitlint/config-conventional": "^21.0.0",
     "@eslint/js": "^10.0.0",
     "@eslint/json": "^1.0.1",
     "@eslint/markdown": "^8.0.0",
