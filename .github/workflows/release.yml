@@ -21,7 +21,7 @@ jobs:
       pull-requests: write # to be able to comment on released pull requests
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - uses: codfish/actions/setup-node-and-install@v3
         with:

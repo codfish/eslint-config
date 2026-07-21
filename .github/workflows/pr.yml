@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: Checkout PR code
-        uses: actions/checkout@v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -43,7 +43,7 @@ jobs:
 
     steps:
       - name: Checkout base branch
-        uses: actions/checkout@v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Setup Node
         uses: codfish/actions/setup-node-and-install@v3
