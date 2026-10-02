@@ -10,12 +10,12 @@ jobs:
 
     steps:
       - name: Checkout PR code
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Setup Node and install dependencies
-        uses: codfish/actions/setup-node-and-install@v3
+        uses: codfish/actions/setup-node-and-install@a5d670e3eacf83aa1e1f906b86b04b8215c17e99 # v3
         with:
           node-version: lts/*
           # Required until all ESLint plugins update their peer dependencies to support ESLint 10
@@ -28,7 +28,7 @@ jobs:
         run: npm pack
 
       - name: Upload package tarball
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: package-tarball
           path: '*.tgz'
@@ -43,22 +43,22 @@ jobs:
 
     steps:
       - name: Checkout base branch
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
 
       - name: Setup Node
-        uses: codfish/actions/setup-node-and-install@v3
+        uses: codfish/actions/setup-node-and-install@a5d670e3eacf83aa1e1f906b86b04b8215c17e99 # v3
         with:
           node-version: lts/*
           # Required until all ESLint plugins update their peer dependencies to support ESLint 10
           install-options: --legacy-peer-deps
 
       - name: Download package tarball
-        uses: actions/download-artifact@v8
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
         with:
           name: package-tarball
 
       - name: Publish PR package
-        uses: codfish/actions/npm-publish-pr@v3
+        uses: codfish/actions/npm-publish-pr@a5d670e3eacf83aa1e1f906b86b04b8215c17e99 # v3
         with:
           tarball: '*.tgz'
           npm-token: ${{ secrets.NPM_TOKEN }}
