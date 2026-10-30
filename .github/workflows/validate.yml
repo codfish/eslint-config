@@ -12,12 +12,12 @@ jobs:
         node: [20.x, 22.x, 24.x, 25.x]
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           ref: ${{ github.event.pull_request.head.sha || github.ref }}
           fetch-depth: 0
 
-      - uses: codfish/actions/setup-node-and-install@v3
+      - uses: codfish/actions/setup-node-and-install@a5d670e3eacf83aa1e1f906b86b04b8215c17e99 # v3
         with:
           node-version: ${{ matrix.node }}
           # Required until all ESLint plugins update their peer dependencies to support ESLint 10
